@@ -1,37 +1,33 @@
 ---
 title: "speedrun"
-description: "A command line for speedrun."
-heroTitle: "speedrun, from the command line"
-heroLead: "A command line for speedrun. One pure-Go binary, no API key, output that pipes into the rest of your tools, and a resource-URI driver other programs can address."
+description: "A command line for speedrun.com — search games, browse leaderboards, and stream verified runs. No API key required."
+heroTitle: "speedrun.com, from the command line"
+heroLead: "Search 36,000+ games, browse leaderboards, and stream verified runs from speedrun.com. One pure-Go binary, no API key, output that pipes into the rest of your tools."
 heroPrimaryURL: "/getting-started/quick-start/"
 heroPrimaryText: "Get started"
 ---
 
-`speedrun` reads public speedrun data over plain HTTPS, shapes it into
+`speedrun` reads public speedrun.com data over plain HTTPS, shapes it into
 clean records, and gets out of your way.
 
 ```bash
-speedrun page <path>            # fetch one page as a record
-speedrun page <path> -o json    # as JSON, ready for jq
-speedrun links <path>           # the pages it links to, each addressable
-speedrun serve --addr :7777     # the same operations over HTTP
+speedrun games --search=mario          # search games by name
+speedrun categories pd0wq31e           # list categories for Super Mario 64
+speedrun leaderboard pd0wq31e w20e9lpd # top runs in 120 Star category
+speedrun runs --game=pd0wq31e          # recent verified runs for a game
+speedrun serve --addr :7777            # the same operations over HTTP
 ```
 
 There is nothing to sign up for and nothing to run alongside it. Output adapts
 to where it goes: an aligned table on your terminal, JSONL the moment you pipe
 it somewhere.
 
-## Two ways to use it
+## What you can do
 
-- **As a command** for reading speedrun by hand or in a script. Start with
-  the [quick start](/getting-started/quick-start/).
-- **As a resource-URI driver** so a host like
-  [ant](https://github.com/tamnd/ant) can address speedrun as
-  `speedrun://` URIs and follow links across sites. See
-  [resource URIs](/guides/resource-uris/).
-
-Both are the same code: one operation, declared once, is a CLI command, an HTTP
-route, an MCP tool, and a URI dereference.
+- **Search games** across 36,000+ titles tracked on speedrun.com
+- **Browse leaderboards** for any game and category combination
+- **Stream recent runs** filtered by game or across the whole site
+- **List categories** to discover what run types a game supports
 
 ## Where to go next
 

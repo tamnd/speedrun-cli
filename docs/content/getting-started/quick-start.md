@@ -1,28 +1,44 @@
 ---
 title: "Quick start"
-description: "Fetch your first record with speedrun."
+description: "Query speedrun.com from the command line."
 weight: 30
 ---
 
-Once `speedrun` is on your `PATH`, fetch a page. The argument is the path
-of the page on speedrun.com (everything after the host), or a full URL:
+Once `speedrun` is on your `PATH`, search for a game:
 
 ```bash
-speedrun page <path>
+speedrun games --search=mario
 ```
 
 By default you get an aligned table. Ask for JSON when you want to pipe it:
 
 ```bash
-$ speedrun page <path> -o json
+$ speedrun games --search=mario -o json
 [
   {
-    "id": "<path>",
-    "url": "https://speedrun.com/<path>",
-    "title": "<path>",
-    "body": "..."
+    "id": "pd0wq31e",
+    "name": "Super Mario 64",
+    "weblink": "https://www.speedrun.com/sm64",
+    "released": 1996
   }
 ]
+```
+
+## Browse a leaderboard
+
+Use the game ID from `games` to find categories, then pull the leaderboard:
+
+```bash
+speedrun categories pd0wq31e
+speedrun leaderboard pd0wq31e w20e9lpd --top=10
+```
+
+## Browse recent runs
+
+```bash
+speedrun runs                          # recent verified runs site-wide
+speedrun runs --game=pd0wq31e          # runs for Super Mario 64 only
+speedrun runs --game=pd0wq31e -o jsonl | jq .primary_time
 ```
 
 ## Shape the output
@@ -30,26 +46,14 @@ $ speedrun page <path> -o json
 The same flags work on every command:
 
 ```bash
-speedrun page <path> --fields id,url        # keep only these columns
-speedrun page <path> --template '{{.Body}}' # just the body text
-speedrun page <path> -o jsonl | jq .url     # one object per line, into jq
+speedrun games --search=mario --fields id,name   # keep only these columns
+speedrun leaderboard pd0wq31e w20e9lpd -o jsonl  # one object per line
 ```
 
-`-o` takes `table`, `json`, `jsonl`, `csv`, `tsv`, `url`, or `raw`. Left to
+`-o` takes `table`, `json`, `jsonl`, `csv`, `tsv`, or `raw`. Left to
 `auto`, it prints a table to a terminal and JSONL into a pipe, so the same
 command reads well by hand and parses cleanly downstream. See
 [output formats](/reference/output/) for the full contract.
-
-## Follow the links
-
-`links` lists the pages a page links to, and each one is a path you can fetch in
-turn:
-
-```bash
-speedrun links <path> -n 10                 # the first ten links
-speedrun links <path> -o url                # just the URLs
-speedrun links <path> -o url | head -3 | xargs -n1 speedrun page
-```
 
 ## Serve it instead
 
@@ -57,15 +61,6 @@ The same operations are available over HTTP and to agents over MCP:
 
 ```bash
 speedrun serve --addr :7777 &
-curl -s 'localhost:7777/v1/page/<path>'          # NDJSON, one record per line
-speedrun mcp                                # MCP over stdio: page, links
+curl -s 'localhost:7777/v1/games?search=mario'   # NDJSON, one record per line
+speedrun mcp                                     # MCP over stdio
 ```
-
-## What to build next
-
-This scaffold ships one example type, `page`, wired end to end so the whole
-chain works today. To make it really about speedrun, model the records you
-care about in `speedrun/` and declare their operations in
-`speedrun/domain.go`. Each one you add shows up as a command here, a route
-under `serve`, and a tool under `mcp`, with no extra wiring. The
-[guides](/guides/) cover the common jobs.
